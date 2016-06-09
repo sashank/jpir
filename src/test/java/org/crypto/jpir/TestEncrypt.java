@@ -88,6 +88,60 @@ public class TestEncrypt extends TestCase{
             assertTrue("Homomorphic Addition Fails" , false);
 
     }
+    private  void testSubsHomomorphic(HE c) {
+        SecureRandom random = new SecureRandom() ;
+        System.out.println("Testing Substracting Homomorphism:\n" + c);
+
+        KeyPair pair = c.getKeyPair();
+        int bits = c.getDomain().bitLength() - 1;
+
+        BigInteger P1 = new BigInteger(bits, random);;
+        BigInteger C1 = c.encrypt(P1);
+        BigInteger P2 = new BigInteger(bits, random);
+        BigInteger C2 = c.encrypt(P2);
+
+        BigInteger C3 = c.substract(C1, C2);
+
+        BigInteger P3 = c.decrypt(C3);
+        System.out.println("P1 " + P1);
+        System.out.println("C1 " + C1);
+        System.out.println("P2 " + P2);
+        System.out.println("C2 " + C2);
+        System.out.println("P3 " + P3);
+
+        if (P3.equals(P1.subtract(P2).mod(c.getDomain())))
+            assertTrue("Homomorphic Substraction Works" , true);
+        else
+            assertTrue("Homomorphic Substraction Fails" , false);
+
+    }
+
+    private void testAdditiveInverse(HE c){
+        SecureRandom random = new SecureRandom() ;
+        System.out.println("Testing Additive Inverse Homomorphism:\n" + c);
+
+        KeyPair pair = c.getKeyPair();
+        int bits = c.getDomain().bitLength() - 1;
+        BigInteger nSquare = c.getDomain().multiply(c.getDomain());
+
+        BigInteger P1 = new BigInteger(bits, random);
+        BigInteger C1 = c.encrypt(P1);
+
+        BigInteger C2 = C1.modPow(new BigInteger("-1"),nSquare);
+
+        BigInteger C3 = c.add(C1, C2);
+
+        BigInteger P3 = c.decrypt(C3);
+        System.out.println("P1 " + P1);
+        System.out.println("C1 " + C1);
+        System.out.println("C2 " + C2);
+        System.out.println("P3 " + P3);
+
+        if (P3.equals(new BigInteger("0")))
+            assertTrue("Homomorphic Addition Inverse Works" , true);
+        else
+            assertTrue("Homomorphic Addition Inverse Fails" , false);
+    }
 
     private  void testMultHomomorphic(HE c) {
         SecureRandom random = new SecureRandom() ;
@@ -223,6 +277,8 @@ public class TestEncrypt extends TestCase{
 
     private void testAll(HE c) {
         testPK(c);
+        testAdditiveInverse(c);
+        testSubsHomomorphic(c);
         testAddHomomorphic(c);
       //  testMultHomomorphic(c);  // Not Supported
         testMultByConstantHE(c);

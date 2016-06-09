@@ -124,6 +124,18 @@ public class Paillier implements HE {
             C2 = BigInteger.ONE;
 		return C1.multiply(C2).mod(key.getN2());
 	}
+    public BigInteger substract(BigInteger C1, BigInteger C2) {
+		PaillierPublicKey key = (PaillierPublicKey)keyPair.getPublic() ;
+        if(C1 == null)
+            C1 = BigInteger.ONE;
+        if(C2 == null)
+            C2 = BigInteger.ONE;
+
+        // Calculate Multiplicative Inverse
+        BigInteger C2Inverse = C2.modPow(new BigInteger("-1"),key.getN2());
+
+		return add(C1,C2Inverse);
+	}
 	
 	public BigInteger multiplyByScalar(BigInteger C1, BigInteger m) {
 		PaillierPublicKey key = (PaillierPublicKey)keyPair.getPublic() ;

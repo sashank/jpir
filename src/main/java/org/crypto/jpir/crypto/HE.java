@@ -37,6 +37,7 @@ import java.security.KeyPair;
 
 public interface HE extends PKE {
 	 BigInteger add(BigInteger C1, BigInteger C2);
+	 BigInteger substract(BigInteger C1, BigInteger C2);
 	 BigInteger multiplyByScalar(BigInteger C, BigInteger m);
      BigInteger multiply(BigInteger C1, BigInteger C2);
 
